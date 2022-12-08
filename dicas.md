@@ -205,5 +205,14 @@ finalizar
 
 ### modulos
 
+# local dos modulos do kernel
+    /lib/modules/<kernel>
+
+# descobrir versao do kernel
+    uname -a
+
+# codigo fonte souce linux
+    /urs/src/linux-source-5.16/
+
 
 
