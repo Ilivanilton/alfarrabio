@@ -214,5 +214,105 @@ finalizar
 # codigo fonte souce linux
     /urs/src/linux-source-5.16/
 
+# Configuração de Múltiplas Redes Wi-Fi com `wpa_supplicant`
+
+## 1. Criar/editar o arquivo de configuração
+
+Edite o arquivo do `wpa_supplicant`:
+
+```sh
+sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
+```
+
+Adicione suas redes Wi-Fi:
+
+```ini
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+country=BR
+
+network={
+    ssid="Rede1"
+    psk="SenhaDaRede1"
+    priority=5
+}
+
+network={
+    ssid="Rede2"
+    psk="SenhaDaRede2"
+    priority=10
+}
+
+network={
+    ssid="Rede3"
+    psk="SenhaDaRede3"
+    priority=7
+}
+```
+
+- ``: redes com maior prioridade são preferidas.
+- Para Wi-Fi **sem senha**, use:
+  ```ini
+  network={ ssid="WiFi_Aberto" key_mgmt=NONE }
+  ```
+
+---
+
+## 2. Configurar para iniciar automaticamente
+
+Edite `/etc/network/interfaces`:
+
+```sh
+sudo nano /etc/network/interfaces
+```
+
+Adicione:
+
+```ini
+auto wlan0
+iface wlan0 inet dhcp
+    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+```
+
+Reinicie a rede:
+
+```sh
+sudo systemctl restart networking
+```
+
+---
+
+## 3. Testar a conexão manualmente
+
+```sh
+sudo wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant/wpa_supplicant.conf
+sudo dhclient wlan0
+ip a show wlan0
+```
+
+---
+
+## 4. Ativar `wpa_supplicant` no boot
+
+```sh
+sudo systemctl enable wpa_supplicant
+sudo systemctl restart wpa_supplicant
+```
+
+---
+
+## 5. Verificar redes disponíveis e status
+
+```sh
+sudo wpa_cli scan
+sudo wpa_cli scan_results
+sudo wpa_cli status
+```
+
+---
+
+Agora, o Debian se conectará automaticamente à melhor rede disponível!
+
+
 
 
